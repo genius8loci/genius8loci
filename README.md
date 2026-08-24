@@ -1,12 +1,5 @@
 ## Hi there 👋
 
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-stats.vercel.app/api?username=genius8loci&show_icons=true&theme=tokyonight&hide_border=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://github-readme-stats.vercel.app/api?username=genius8loci&show_icons=true&theme=default&hide_border=true">
-  <img alt="GitHub stats for genius8loci" src="https://github-readme-stats.vercel.app/api?username=genius8loci&show_icons=true&hide_border=true">
-</picture>
-
 <!--
 **genius8loci/genius8loci** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
