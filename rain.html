@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>GENIUS8LOCI Rain</title><style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style><canvas id="c" width="1200" height="300"></canvas><script>
+const c=document.getElementById("c"),x=c.getContext("2d"),W=c.width,H=c.height;
+const DPR=1, text="GENIUS8LOCI";
+x.font="900 116px Arial Black,Arial,sans-serif"; x.textAlign="center"; x.textBaseline="middle";
+const mask=document.createElement("canvas"); mask.width=W; mask.height=H;
+const m=mask.getContext("2d"); m.font=x.font; m.textAlign="center"; m.textBaseline="middle";
+m.fillStyle="#fff"; m.fillText(text,W/2,H/2+5);
+const pix=m.getImageData(0,0,W,H).data;
+const pts=[];
+for(let y=0;y<H;y+=3)for(let xx=0;xx<W;xx+=3)if(pix[(y*W+xx)*4+3]>128)pts.push([xx,y]);
+
+function hit(p){
+  const r=5, q=Math.max(0,Math.min(pts.length-1,Math.floor(Math.random()*pts.length)));
+  return [pts[q][0]+(Math.random()-.5)*2,pts[q][1]+(Math.random()-.5)*2];
+}
+const drops=Array.from({length:260},()=>({
+  x:Math.random()*W,y:-Math.random()*H*1.5,v:2+Math.random()*4,r:.8+Math.random()*1.7,
+  landed:false,tx:0,ty:0,age:0
+}));
+let frame=0;
+function draw(){
+  x.fillStyle="#000";x.fillRect(0,0,W,H);
+  const t=frame/60;
+  for(const p of drops){
+    if(!p.landed){p.y+=p.v;p.x+=Math.sin((frame+p.x)*.018)*.18;
+      if(p.y>H*.48){
+        const q=hit(p);
+        if(Math.abs(p.x-q[0])
+<9 && Math.abs(p.y-q[1])
+	<7){
+          p.landed=true;p.tx=q[0];p.ty=q[1];p.age=0;
+        }
+      }
+      if(p.y>H+10){p.y=-5;p.x=Math.random()*W;}
+    }else{
+      p.age++;
+      if(p.age>55){p.landed=false;p.y=-5;p.x=Math.random()*W;}
+    }
+    x.beginPath();x.fillStyle="rgba(255,255,255,.9)";
+    x.arc(p.landed?p.tx:p.x,p.landed?p.ty:p.y,p.r,0,Math.PI*2);x.fill();
+  }
+  // Revealed letter contour: more drops => more points revealed.
+  const reveal=Math.min(1,frame/650);
+  const n=Math.floor(pts.length*reveal);
+  x.save(); x.font="900 116px Arial Black,Arial,sans-serif";x.textAlign="center";x.textBaseline="middle";
+  x.globalCompositeOperation="source-over";
+  x.strokeStyle="rgba(255,255,255,.10)";x.lineWidth=1.5;
+  x.strokeText(text,W/2,H/2+5);
+  x.restore();
+  // Mask the interior to make the visible text mostly contour-like.
+  x.save();x.globalCompositeOperation="destination-out";x.fillStyle="#000";
+  x.font="900 111px Arial Black,Arial,sans-serif";x.textAlign="center";x.textBaseline="middle";
+  x.fillText(text,W/2,H/2+5);x.restore();
+  x.save();x.globalCompositeOperation="source-over";
+  x.fillStyle="#fff";
+  for(let i=0;i
+		<n;i+=2){const q=pts[i];x.fillRect(q[0],q[1],2,2);}
+  x.restore();
+  frame++;
+  requestAnimationFrame(draw);
+}
+draw();
+
+		</script>
+	</html>
