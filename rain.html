@@ -1,65 +1,511 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><title>GENIUS8LOCI Rain</title><style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style><canvas id="c" width="1200" height="300"></canvas><script>
-const c=document.getElementById("c"),x=c.getContext("2d"),W=c.width,H=c.height;
-const DPR=1, text="GENIUS8LOCI";
-x.font="900 116px Arial Black,Arial,sans-serif"; x.textAlign="center"; x.textBaseline="middle";
-const mask=document.createElement("canvas"); mask.width=W; mask.height=H;
-const m=mask.getContext("2d"); m.font=x.font; m.textAlign="center"; m.textBaseline="middle";
-m.fillStyle="#fff"; m.fillText(text,W/2,H/2+5);
-const pix=m.getImageData(0,0,W,H).data;
-const pts=[];
-for(let y=0;y<H;y+=3)for(let xx=0;xx<W;xx+=3)if(pix[(y*W+xx)*4+3]>128)pts.push([xx,y]);
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml">
 
-function hit(p){
-  const r=5, q=Math.max(0,Math.min(pts.length-1,Math.floor(Math.random()*pts.length)));
-  return [pts[q][0]+(Math.random()-.5)*2,pts[q][1]+(Math.random()-.5)*2];
-}
-const drops=Array.from({length:260},()=>({
-  x:Math.random()*W,y:-Math.random()*H*1.5,v:2+Math.random()*4,r:.8+Math.random()*1.7,
-  landed:false,tx:0,ty:0,age:0
-}));
-let frame=0;
-function draw(){
-  x.fillStyle="#000";x.fillRect(0,0,W,H);
-  const t=frame/60;
-  for(const p of drops){
-    if(!p.landed){p.y+=p.v;p.x+=Math.sin((frame+p.x)*.018)*.18;
-      if(p.y>H*.48){
-        const q=hit(p);
-        if(Math.abs(p.x-q[0])
-<9 && Math.abs(p.y-q[1])
-	<7){
-          p.landed=true;p.tx=q[0];p.ty=q[1];p.age=0;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>GENIUS8LOCI — Rain</title>
+    <meta name="description" content="Дождь прорисовывает контур GENIUS8LOCI: каждая капля отскакивает от буквы и проявляет её силуэт." />
+
+    <style>
+      :root {
+        color-scheme: dark light;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        touch-action: manipulation;
+      }
+
+      #hint {
+        position: fixed;
+        left: 50%;
+        bottom: 22px;
+        transform: translateX(-50%);
+        font: 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.8s ease;
+      }
+
+      @media (prefers-color-scheme: light) {
+        html,
+        body {
+          background: #fff;
+        }
+
+        #hint {
+          color: #0d1117;
         }
       }
-      if(p.y>H+10){p.y=-5;p.x=Math.random()*W;}
-    }else{
-      p.age++;
-      if(p.age>55){p.landed=false;p.y=-5;p.x=Math.random()*W;}
-    }
-    x.beginPath();x.fillStyle="rgba(255,255,255,.9)";
-    x.arc(p.landed?p.tx:p.x,p.landed?p.ty:p.y,p.r,0,Math.PI*2);x.fill();
-  }
-  // Revealed letter contour: more drops => more points revealed.
-  const reveal=Math.min(1,frame/650);
-  const n=Math.floor(pts.length*reveal);
-  x.save(); x.font="900 116px Arial Black,Arial,sans-serif";x.textAlign="center";x.textBaseline="middle";
-  x.globalCompositeOperation="source-over";
-  x.strokeStyle="rgba(255,255,255,.10)";x.lineWidth=1.5;
-  x.strokeText(text,W/2,H/2+5);
-  x.restore();
-  // Mask the interior to make the visible text mostly contour-like.
-  x.save();x.globalCompositeOperation="destination-out";x.fillStyle="#000";
-  x.font="900 111px Arial Black,Arial,sans-serif";x.textAlign="center";x.textBaseline="middle";
-  x.fillText(text,W/2,H/2+5);x.restore();
-  x.save();x.globalCompositeOperation="source-over";
-  x.fillStyle="#fff";
-  for(let i=0;i
-		<n;i+=2){const q=pts[i];x.fillRect(q[0],q[1],2,2);}
-  x.restore();
-  frame++;
-  requestAnimationFrame(draw);
-}
-draw();
+    </style>
+  </head>
 
-		</script>
-	</html>
+  <body>
+    <canvas id="c" aria-label="GENIUS8LOCI: дождь прорисовывает контур надписи">
+      Дождь прорисовывает надпись GENIUS8LOCI. Ваш браузер не поддерживает canvas.
+    </canvas>
+
+    <div id="hint">клик — заново</div>
+
+    <script>
+      //<![CDATA[
+      (() => {
+        'use strict';
+
+        const WM = {"d":"M179.54,143.32L179.54,126.19L218.85,126.19L218.85,161.29Q207.56,168.98 198.89,171.76Q190.21,174.54 178.3,174.54Q163.64,174.54 154.4,169.55Q145.17,164.55 140.08,154.66Q135.0,144.78 135.0,131.97Q135.0,118.49 140.56,108.52Q146.12,98.55 156.85,93.39Q165.22,89.4 179.37,89.4Q193.02,89.4 199.79,91.87Q206.55,94.34 211.02,99.54Q215.48,104.73 217.73,112.71L193.19,117.09Q191.67,112.43 188.05,109.96Q184.43,107.48 178.81,107.48Q170.44,107.48 165.47,113.3Q160.5,119.11 160.5,131.69Q160.5,145.06 165.53,150.79Q170.55,156.52 179.54,156.52Q183.81,156.52 187.68,155.28Q191.56,154.04 196.56,151.07L196.56,143.32L179.54,143.32ZM240.23,90.8L308.42,90.8L308.42,108.38L265.73,108.38L265.73,121.47L305.33,121.47L305.33,138.26L265.73,138.26L265.73,154.49L309.65,154.49L309.65,173.14L240.23,173.14L240.23,90.8ZM329.85,90.8L353.61,90.8L384.61,136.35L384.61,90.8L408.59,90.8L408.59,173.14L384.61,173.14L353.78,127.93L353.78,173.14L329.85,173.14L329.85,90.8ZM432.84,90.8L458.34,90.8L458.34,173.14L432.84,173.14L432.84,90.8ZM536.5,90.8L561.88,90.8L561.88,139.89Q561.88,147.19 559.61,153.68Q557.33,160.17 552.48,165.02Q547.62,169.88 542.28,171.85Q534.87,174.6 524.48,174.6Q518.47,174.6 511.36,173.76Q504.26,172.92 499.49,170.42Q494.71,167.92 490.75,163.31Q486.79,158.71 485.33,153.82Q482.97,145.96 482.97,139.89L482.97,90.8L508.36,90.8L508.36,141.07Q508.36,147.81 512.09,151.6Q515.83,155.39 522.46,155.39Q529.03,155.39 532.76,151.66Q536.5,147.92 536.5,141.07L536.5,90.8ZM580.62,145.9L604.83,144.38Q605.62,150.28 608.03,153.37Q611.96,158.37 619.26,158.37Q624.71,158.37 627.66,155.81Q630.61,153.26 630.61,149.89Q630.61,146.69 627.8,144.16Q624.99,141.63 614.77,139.39Q598.03,135.62 590.9,129.39Q583.71,123.15 583.71,113.49Q583.71,107.15 587.39,101.5Q591.07,95.86 598.46,92.63Q605.84,89.4 618.7,89.4Q634.49,89.4 642.77,95.27Q651.05,101.14 652.63,113.94L628.64,115.35Q627.69,109.79 624.63,107.26Q621.57,104.73 616.18,104.73Q611.74,104.73 609.49,106.61Q607.25,108.5 607.25,111.19Q607.25,113.16 609.1,114.73Q610.9,116.36 617.64,117.76Q634.32,121.36 641.53,125.04Q648.75,128.71 652.04,134.16Q655.32,139.61 655.32,146.35Q655.32,154.27 650.94,160.95Q646.56,167.64 638.7,171.09Q630.83,174.54 618.87,174.54Q597.87,174.54 589.78,166.46Q581.69,158.37 580.62,145.9ZM684.51,128.88Q679.12,126.02 676.64,122.48Q673.27,117.65 673.27,111.36Q673.27,101.03 682.99,94.45Q690.57,89.4 703.04,89.4Q719.55,89.4 727.45,95.69Q735.34,101.98 735.34,111.53Q735.34,117.09 732.19,121.92Q729.83,125.51 724.78,128.88Q731.46,132.08 734.75,137.36Q738.03,142.64 738.03,149.05Q738.03,155.22 735.2,160.59Q732.36,165.95 728.23,168.87Q724.1,171.79 717.95,173.17Q711.8,174.54 704.84,174.54Q691.75,174.54 684.84,171.46Q677.94,168.37 674.34,162.36Q670.75,156.35 670.75,148.93Q670.75,141.69 674.12,136.66Q677.49,131.63 684.51,128.88ZM694.79,112.71Q694.79,116.98 697.45,119.59Q700.12,122.2 704.56,122.2Q708.49,122.2 711.02,119.62Q713.55,117.03 713.55,112.93Q713.55,108.66 710.91,106.0Q708.27,103.33 704.17,103.33Q700.01,103.33 697.4,105.94Q694.79,108.55 694.79,112.71ZM693.55,148.15Q693.55,153.6 696.86,157.05Q700.18,160.5 704.45,160.5Q708.55,160.5 711.8,156.99Q715.06,153.48 715.06,148.09Q715.06,142.64 711.78,139.16Q708.49,135.68 704.17,135.68Q699.9,135.68 696.72,139.05Q693.55,142.42 693.55,148.15ZM757.5,90.8L782.94,90.8L782.94,152.87L822.65,152.87L822.65,173.14L757.5,173.14L757.5,90.8ZM837.35,132.03Q837.35,111.86 848.58,100.63Q859.81,89.4 879.86,89.4Q900.42,89.4 911.54,100.44Q922.66,111.47 922.66,131.35Q922.66,145.79 917.8,155.03Q912.95,164.27 903.76,169.41Q894.58,174.54 880.88,174.54Q866.95,174.54 857.82,170.11Q848.69,165.67 843.02,156.07Q837.35,146.46 837.35,132.03ZM862.79,132.14Q862.79,144.61 867.42,150.06Q872.06,155.5 880.03,155.5Q888.23,155.5 892.73,150.17Q897.22,144.83 897.22,131.02Q897.22,119.39 892.53,114.03Q887.84,108.66 879.81,108.66Q872.11,108.66 867.45,114.11Q862.79,119.56 862.79,132.14ZM997.51,139.5L1019.81,146.24Q1017.56,155.62 1012.73,161.91Q1007.9,168.2 1000.74,171.4Q993.58,174.6 982.51,174.6Q969.09,174.6 960.58,170.7Q952.07,166.79 945.89,156.97Q939.72,147.14 939.72,131.8Q939.72,111.36 950.58,100.38Q961.45,89.4 981.33,89.4Q996.89,89.4 1005.79,95.69Q1014.7,101.98 1019.02,115.01L996.56,120.01Q995.38,116.25 994.08,114.5Q991.95,111.58 988.86,110.01Q985.77,108.44 981.95,108.44Q973.3,108.44 968.7,115.4Q965.22,120.57 965.22,131.63Q965.22,145.34 969.37,150.42Q973.53,155.5 981.05,155.5Q988.36,155.5 992.09,151.4Q995.83,147.3 997.51,139.5ZM1039.5,90.8L1065.0,90.8L1065.0,173.14L1039.5,173.14L1039.5,90.8Z","pts":[[179.5,143.3],[192.4,126.2],[218.8,129.8],[218.8,159.8],[193.2,173.2],[163.4,172.9],[140.4,155.2],[135.3,126.0],[147.9,99.6],[175.4,89.6],[204.6,94.2],[211.1,113.9],[185.5,108.6],[162.0,120.6],[164.9,149.7],[192.2,153.4],[240.2,90.8],[270.2,90.8],[300.2,90.8],[304.2,108.4],[274.2,108.4],[274.2,121.5],[304.2,121.5],[293.3,138.3],[265.7,140.7],[282.0,154.5],[309.6,156.8],[296.0,173.1],[266.0,173.1],[240.2,168.9],[240.2,138.9],[240.2,108.9],[329.9,90.8],[357.1,96.0],[374.0,120.8],[384.6,125.2],[384.6,95.2],[408.6,92.4],[408.6,122.4],[408.6,152.4],[399.3,173.1],[376.0,160.5],[359.1,135.7],[353.8,148.5],[348.4,173.1],[329.9,161.7],[329.9,131.7],[329.9,101.7],[432.8,90.8],[458.3,95.3],[458.3,125.3],[458.3,155.3],[446.2,173.1],[432.8,156.5],[432.8,126.5],[432.8,96.5],[536.5,90.8],[561.9,95.4],[561.9,125.4],[559.0,155.0],[536.9,173.4],[507.0,173.0],[485.5,154.1],[483.0,124.4],[483.0,94.4],[508.4,91.8],[508.4,121.8],[511.7,151.0],[535.9,145.8],[536.5,115.8],[580.6,145.9],[606.2,149.9],[630.2,152.2],[607.9,137.6],[584.9,120.3],[594.9,94.5],[624.0,89.7],[649.2,103.1],[634.2,115.0],[610.2,106.2],[628.0,120.3],[652.7,135.6],[648.8,163.6],[621.8,174.4],[592.8,168.8],[684.5,128.9],[675.1,103.7],[699.8,89.6],[728.2,96.5],[731.1,123.4],[737.7,145.1],[725.5,170.5],[696.1,174.1],[672.5,158.5],[679.4,131.6],[694.8,112.7],[713.5,112.7],[693.5,148.2],[713.7,154.2],[699.1,137.1],[757.5,90.8],[782.9,95.4],[782.9,125.4],[785.4,152.9],[815.4,152.9],[820.1,173.1],[790.1,173.1],[760.1,173.1],[757.5,145.8],[757.5,115.8],[837.4,132.0],[845.9,103.9],[871.6,90.0],[901.0,93.3],[920.3,115.1],[921.4,144.8],[904.8,168.7],[875.8,174.3],[848.7,163.3],[837.6,136.2],[862.8,132.1],[877.1,155.1],[896.8,138.2],[888.8,110.9],[864.5,120.1],[997.5,139.5],[1017.8,152.6],[997.0,172.7],[967.3,173.0],[944.7,154.7],[940.1,125.5],[952.3,99.0],[980.0,89.5],[1008.1,97.8],[1010.0,117.0],[985.8,108.9],[965.6,125.4],[972.5,153.2],[996.4,143.6],[1039.5,90.8],[1065.0,95.3],[1065.0,125.3],[1065.0,155.3],[1052.8,173.1],[1039.5,156.5],[1039.5,126.5],[1039.5,96.5]],"box":[135.0,89.4,930.0,85.2]};
+        const cv = document.getElementById('c');
+        const ctx = cv.getContext('2d', { alpha: false });
+        const hint = document.getElementById('hint');
+        const path = new Path2D(WM.d);
+        const PTS = WM.pts;
+        const [BX, BY, BW, BH] = WM.box;
+
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+        const SLANT = 6 * Math.PI / 180;
+        const UX = -Math.sin(SLANT), UY = Math.cos(SLANT);   // unit fall direction
+        const LW = 2.2;          // wordmark stroke, authored units
+        const BLOB = 34;         // reveal blob radius, authored units
+        const BGROW = 1000;      // ms for a blob to open up
+        const REVEAL = 6500;     // ms budget for the seeded drops to finish the wordmark
+        const HIT = 7;           // impact tolerance, authored units
+        const TAG = 'R U S T   ·   S Y S T E M S   ·   T O O L S';
+
+        let W, H, S, OX, OY, groundY, reg, refTop;
+        let wmCv, wmx, revCv, revx, outCv, outx, refCv, refx;
+        let ink, bg, K;
+
+        // -------------------------------------------------------------- palette
+        function palette() {
+          const light = matchMedia('(prefers-color-scheme: light)').matches;
+          ink = light ? '13,17,23' : '255,255,255';
+          bg = light ? '255,255,255' : '0,0,0';
+          K = light ? 0.8 : 1;                 // dark ink on white reads heavier
+        }
+
+        const I = a => 'rgba(' + ink + ',' + (a * K).toFixed(3) + ')';
+
+        // ---------------------------------------------------------------- state
+        let drops = [], parts = [], ripples = [], flashes = [], blobs = [];
+        let revealed = new Uint8Array(PTS.length);
+        let claimed = new Uint8Array(PTS.length);
+        let hitCount = 0, seeded = 0, t0 = 0, prev = 0, raf = 0;
+
+        const CELL = 26;
+        const grid = new Map();
+        for (let i = 0; i < PTS.length; i++) {
+          const k = ((PTS[i][0] / CELL) | 0) + ',' + ((PTS[i][1] / CELL) | 0);
+          (grid.get(k) || grid.set(k, []).get(k)).push(i);
+        }
+
+        const sx = ax => OX + ax * S;
+        const sy = ay => OY + ay * S;
+
+        // --------------------------------------------------------------- layout
+        function resize() {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          W = cv.width = Math.max(1, Math.round(innerWidth * dpr));
+          H = cv.height = Math.max(1, Math.round(innerHeight * dpr));
+          palette();
+
+          S = Math.max(0.05, Math.min(W * 0.84 / BW, H * 0.30 / BH));
+          OX = W / 2 - (BX + BW / 2) * S;
+          // centre the whole scene - wordmark, puddle and tagline - not just the wordmark
+          OY = H * 0.5 - (BY + (BY + BH + 116)) / 2 * S;
+          groundY = sy(BY + BH + 26);
+
+          const pad = 46;
+          reg = { x: sx(BX - pad), y: sy(BY - pad), w: (BW + pad * 2) * S, h: (BH + pad * 2) * S };
+          [wmCv, revCv, outCv] = [wmCv, revCv, outCv].map(() => {
+            const c = document.createElement('canvas');
+            c.width = Math.max(1, Math.ceil(reg.w));
+            c.height = Math.max(1, Math.ceil(reg.h));
+            return c;
+          });
+          wmx = wmCv.getContext('2d');
+          revx = revCv.getContext('2d');
+          outx = outCv.getContext('2d');
+
+          // the reflection lives on its own layer so its fade never paints over the scene
+          refCv = document.createElement('canvas');
+          refCv.width = Math.max(1, Math.ceil(W));
+          refCv.height = Math.max(1, Math.ceil(reg.h * 0.5) + 4);
+          refx = refCv.getContext('2d');
+          refTop = groundY * 1.5 - 0.5 * (reg.y + reg.h);
+
+          drawWordmark();
+          repaintReveal();
+          seedDrops();
+        }
+
+        function stage(c) {                     // authored units -> this offscreen canvas
+          c.setTransform(1, 0, 0, 1, 0, 0);
+          c.translate(OX - reg.x, OY - reg.y);
+          c.scale(S, S);
+        }
+
+        function drawWordmark() {
+          wmx.setTransform(1, 0, 0, 1, 0, 0);
+          wmx.clearRect(0, 0, wmCv.width, wmCv.height);
+          stage(wmx);
+          wmx.lineJoin = wmx.lineCap = 'round';
+          wmx.strokeStyle = I(0.14); wmx.lineWidth = LW * 3.4; wmx.stroke(path);   // halo
+          wmx.strokeStyle = I(1);    wmx.lineWidth = LW;       wmx.stroke(path);   // crisp
+        }
+
+        function paintBlob(i, r) {
+          if (r <= 0) return;
+          stage(revx);
+          const [x, y] = PTS[i];
+          const g = revx.createRadialGradient(x, y, 0, x, y, r);
+          g.addColorStop(0, '#fff');
+          g.addColorStop(0.5, '#fff');
+          g.addColorStop(1, 'rgba(255,255,255,0)');
+          revx.fillStyle = g;
+          revx.beginPath();
+          revx.arc(x, y, r, 0, 7);
+          revx.fill();
+        }
+
+        function repaintReveal() {              // after a resize, rebuild from scratch
+          revx.setTransform(1, 0, 0, 1, 0, 0);
+          revx.clearRect(0, 0, revCv.width, revCv.height);
+          for (const b of blobs) paintBlob(b.i, b.r);
+        }
+
+        // ----------------------------------------------------------------- rain
+        function makeDrop(layer) {
+          const sc = [0.45, 0.75, 1][layer];
+          return {
+            x: Math.random() * (W + 200) - 100,
+            y: -Math.random() * H - 20,
+            v: (0.34 + Math.random() * 0.16) * sc * H / 60,   // px per frame at 60fps
+            len: [10, 20, 34][layer] * S,
+            w: [0.9, 1.2, 1.7][layer] * S,
+            a: [0.22, 0.4, 0.55][layer],
+            layer,
+            target: -1
+          };
+        }
+
+        function seedDrops() {
+          drops.length = 0;
+          const total = Math.max(70, Math.min(220, Math.round(innerWidth / 6)));
+          for (let i = 0; i < total; i++) drops.push(makeDrop(i % 3 === 2 ? 2 : i % 2));
+        }
+
+        /** A drop aimed at an unrevealed point, spawned above the viewport on the rain's slant. */
+        function seedTargeted() {
+          const free = [];
+          for (let i = 0; i < PTS.length; i++) if (!revealed[i] && !claimed[i]) free.push(i);
+          if (!free.length) return;
+
+          const i = free[(Math.random() * free.length) | 0];
+          claimed[i] = 1;                       // never aim two drops at the same spot
+
+          const tx = sx(PTS[i][0]), ty = sy(PTS[i][1]);
+          const dist = (ty + 80 * S) / UY;
+          const d = makeDrop(2);
+          d.x = tx - UX * dist;
+          d.y = ty - UY * dist;
+          d.target = i;
+          drops.push(d);
+        }
+
+        // -------------------------------------------------------------- impacts
+        /** A splash: 4-7 teardrops, wildly uneven in angle, speed, size and life. */
+        function impact(i, x, y) {
+          if (!revealed[i]) { revealed[i] = 1; hitCount++; blobs.push({ i, r: 0, t: 0 }); }
+          flashes.push({ x, y, t: 0, life: 130 });
+
+          const n = 4 + ((Math.random() * 4) | 0);
+          for (let k = 0; k < n; k++) {
+            const a = -Math.PI / 2 + (Math.random() < 0.5 ? -1 : 1) * (0.17 + Math.random() * 1.92);
+            const sp = (7 + Math.random() ** 2 * 19) * S / 16;    // short throw: mostly slow
+            parts.push({
+              x, y,
+              vx: Math.cos(a) * sp,
+              vy: Math.sin(a) * sp,
+              ry: (0.4 + Math.random() ** 2 * 0.85) * S,          // thin: fine spray, not flakes
+              t: 0,
+              life: 280 + Math.random() * 420
+            });
+          }
+        }
+
+        /** Nearest contour point to a screen position, or -1. */
+        function hitTest(px, py) {
+          const ax = (px - OX) / S, ay = (py - OY) / S;
+          if (ax < BX - HIT || ax > BX + BW + HIT || ay < BY - HIT || ay > BY + BH + HIT) return -1;
+
+          const cx = (ax / CELL) | 0, cy = (ay / CELL) | 0;
+          let best = -1, bd = HIT * HIT;
+          for (let gx = cx - 1; gx <= cx + 1; gx++) {
+            for (let gy = cy - 1; gy <= cy + 1; gy++) {
+              const cell = grid.get(gx + ',' + gy);
+              if (!cell) continue;
+              for (const i of cell) {
+                const dx = PTS[i][0] - ax, dy = PTS[i][1] - ay, d = dx * dx + dy * dy;
+                if (d < bd) { bd = d; best = i; }
+              }
+            }
+          }
+          return best;
+        }
+
+        // ---------------------------------------------------------------- frame
+        function step(dt) {
+          const f = dt / 16.67;
+
+          if (t0 && hitCount < PTS.length) {    // pace the reveal
+            const elapsed = performance.now() - t0;
+            const want = Math.min(PTS.length, Math.ceil(elapsed / REVEAL * PTS.length));
+            while (seeded < want) { seedTargeted(); seeded++; }
+          }
+
+          for (let k = drops.length - 1; k >= 0; k--) {
+            const d = drops[k];
+            d.x += UX * d.v * f;
+            d.y += UY * d.v * f;
+
+            if (d.target >= 0) {
+              if (d.y >= sy(PTS[d.target][1])) {
+                impact(d.target, sx(PTS[d.target][0]), sy(PTS[d.target][1]));
+                drops.splice(k, 1);
+              }
+              continue;
+            }
+
+            const i = hitTest(d.x, d.y);        // any drop can ricochet off a letter
+            if (i >= 0) {
+              impact(i, sx(PTS[i][0]), sy(PTS[i][1]));
+              Object.assign(d, makeDrop(d.layer), { y: -20 });
+              continue;
+            }
+
+            if (d.y >= groundY) {
+              ripples.push({
+                x: d.x, r: 0, max: (16 + Math.random() * 20) * S,
+                t: 0, life: 1500 + Math.random() * 900
+              });
+              Object.assign(d, makeDrop(d.layer), { y: -20 });
+            }
+          }
+
+          for (let k = blobs.length - 1; k >= 0; k--) {
+            const b = blobs[k];
+            if (b.r >= BLOB) continue;
+            b.t += dt;
+            const p = Math.min(1, b.t / BGROW);
+            b.r = BLOB * (1 - Math.pow(1 - p, 3));            // ease-out
+            paintBlob(b.i, b.r);
+          }
+
+          for (let k = parts.length - 1; k >= 0; k--) {
+            const p = parts[k];
+            p.t += dt;
+            p.x += p.vx * f;
+            p.y += p.vy * f;
+            p.vy += 0.34 * S / 16 * f;
+            if (p.t > p.life) parts.splice(k, 1);
+          }
+
+          for (let k = flashes.length - 1; k >= 0; k--) {
+            if ((flashes[k].t += dt) > flashes[k].life) flashes.splice(k, 1);
+          }
+
+          for (let k = ripples.length - 1; k >= 0; k--) {
+            const r = ripples[k];
+            r.t += dt;
+            r.r = r.max * (1 - Math.pow(1 - Math.min(1, r.t / r.life), 2));
+            if (r.t > r.life) ripples.splice(k, 1);
+          }
+        }
+
+        function rain(layer) {
+          ctx.lineCap = 'round';
+          for (const d of drops) {
+            if (d.layer !== layer) continue;
+            const tailX = d.x - UX * d.len, tailY = d.y - UY * d.len;
+            const g = ctx.createLinearGradient(tailX, tailY, d.x, d.y);
+            g.addColorStop(0, I(0));
+            g.addColorStop(1, I(d.a));
+            ctx.strokeStyle = g;
+            ctx.lineWidth = d.w;
+            ctx.beginPath();
+            ctx.moveTo(tailX, tailY);
+            ctx.lineTo(d.x, d.y);
+            ctx.stroke();
+          }
+        }
+
+        function draw() {
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.fillStyle = 'rgb(' + bg + ')';
+          ctx.fillRect(0, 0, W, H);
+
+          const gg = ctx.createRadialGradient(W / 2, sy(132), 0, W / 2, sy(132), BW * 0.6 * S);
+          gg.addColorStop(0, I(0.1));
+          gg.addColorStop(1, I(0));
+          ctx.fillStyle = gg;
+          ctx.fillRect(0, 0, W, H);
+
+          rain(0);
+          rain(1);
+
+          outx.setTransform(1, 0, 0, 1, 0, 0);
+          outx.clearRect(0, 0, outCv.width, outCv.height);
+          outx.globalCompositeOperation = 'source-over';
+          outx.drawImage(wmCv, 0, 0);
+          outx.globalCompositeOperation = 'destination-in';
+          outx.drawImage(revCv, 0, 0);
+          ctx.drawImage(outCv, reg.x, reg.y);
+
+          // Puddle reflection. It is built on its own layer and faded by erasing its own
+          // alpha, never by painting background over the scene - that used to leave a hard
+          // seam where the covering rectangle ended and the glow reappeared underneath.
+          refx.setTransform(1, 0, 0, 1, 0, 0);
+          refx.clearRect(0, 0, refCv.width, refCv.height);
+          refx.save();
+          refx.translate(0, groundY * 1.5 - refTop);
+          refx.scale(1, -0.5);
+          refx.drawImage(outCv, reg.x, reg.y);
+          refx.restore();
+
+          refx.globalCompositeOperation = 'destination-out';
+          const fade = refx.createLinearGradient(0, 0, 0, refCv.height);
+          fade.addColorStop(0, 'rgba(0,0,0,0)');
+          fade.addColorStop(0.45, 'rgba(0,0,0,.45)');
+          fade.addColorStop(1, 'rgba(0,0,0,1)');
+          refx.fillStyle = fade;
+          refx.fillRect(0, 0, refCv.width, refCv.height);
+          refx.globalCompositeOperation = 'source-over';
+
+          ctx.save();
+          ctx.globalAlpha = 0.22 * K;
+          ctx.drawImage(refCv, 0, refTop);
+          ctx.restore();
+
+          const gl = ctx.createLinearGradient(sx(BX - 20), 0, sx(BX + BW + 20), 0);
+          gl.addColorStop(0, I(0));
+          gl.addColorStop(0.5, I(0.25));
+          gl.addColorStop(1, I(0));
+          ctx.fillStyle = gl;
+          ctx.fillRect(sx(BX - 20), groundY, (BW + 40) * S, Math.max(1, S));
+
+          ctx.lineWidth = Math.max(1, S);                     // puddle ripples
+          for (const r of ripples) {
+            ctx.strokeStyle = I(0.45 * (1 - r.t / r.life));
+            ctx.beginPath();
+            ctx.ellipse(r.x, groundY, r.r, r.r * 0.26, 0, 0, 7);
+            ctx.stroke();
+          }
+
+          for (const p of parts) {                            // ricochet droplets as teardrops
+            const sp = (Math.hypot(p.vx, p.vy) || 1) * 16 / S;
+            const rx = p.ry * (1.7 + Math.min(1.3, sp * 0.055));  // faster droplet, more drawn out
+            ctx.fillStyle = I(0.95 * (1 - p.t / p.life));
+            ctx.beginPath();
+            ctx.ellipse(p.x, p.y, rx, p.ry, Math.atan2(p.vy, p.vx), 0, 7);
+            ctx.fill();
+          }
+
+          for (const fl of flashes) {                         // brief spark at the contact point
+            const q = fl.t / fl.life;
+            ctx.fillStyle = I(0.95 * (1 - q));
+            ctx.beginPath();
+            ctx.arc(fl.x, fl.y, 1.9 * S * (1 - q), 0, 7);
+            ctx.fill();
+          }
+
+          rain(2);
+
+          const shown = Math.min(1, Math.max(0, (hitCount / PTS.length - 0.55) / 0.35));
+          ctx.fillStyle = I(0.45 * shown);
+          ctx.font = (12.5 * S) + 'px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(TAG, W / 2, sy(BY + BH + 116));
+        }
+
+        // ----------------------------------------------------------------- loop
+        function frame(now) {
+          raf = requestAnimationFrame(frame);
+          if (!t0) t0 = prev = now;
+          const dt = Math.min(50, now - prev);
+          prev = now;
+          step(dt);
+          draw();
+        }
+
+        function still() {                                    // prefers-reduced-motion
+          blobs.length = 0;
+          for (let i = 0; i < PTS.length; i++) {
+            revealed[i] = 1;
+            blobs.push({ i, r: BLOB, t: BGROW });
+          }
+          hitCount = PTS.length;
+          repaintReveal();
+          draw();
+        }
+
+        function restart() {
+          drops = []; parts = []; ripples = []; flashes = []; blobs = [];
+          revealed = new Uint8Array(PTS.length);
+          claimed = new Uint8Array(PTS.length);
+          hitCount = 0; seeded = 0; t0 = 0;
+          repaintReveal();
+          seedDrops();
+        }
+
+        addEventListener('resize', () => {
+          resize();
+          if (reduced.matches) still();
+        });
+
+        matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+          palette();
+          drawWordmark();
+          if (reduced.matches) still();
+        });
+
+        addEventListener('click', () => {
+          if (!reduced.matches) restart();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            cancelAnimationFrame(raf);
+            raf = 0;
+          } else if (!raf && !reduced.matches) {
+            prev = performance.now();
+            raf = requestAnimationFrame(frame);
+          }
+        });
+
+        resize();
+        if (reduced.matches) {
+          still();
+        } else {
+          raf = requestAnimationFrame(frame);
+          setTimeout(() => { hint.style.opacity = '.35'; }, 8000);
+        }
+      })();
+      //]]>
+    </script>
+  </body>
+
+</html>
