@@ -5,7 +5,6 @@
   <source media="(prefers-color-scheme: light)" srcset="https://cdn.jsdelivr.net/gh/genius8loci/genius8loci@95a6844095c09fa85d98ae61cd9134d677f8b671/rain-light.svg">
   <img alt="GENIUS8LOCI" src="https://cdn.jsdelivr.net/gh/genius8loci/genius8loci@95a6844095c09fa85d98ae61cd9134d677f8b671/rain.svg" width="100%">
 </picture>
-
 <br><br>
 
 <div align="center">
@@ -13,7 +12,6 @@
 [![genius loci](https://img.shields.io/badge/genius%20loci-Пишу%20инструменты,%20которые%20вы%20не%20просили-9966cc?style=for-the-badge&labelColor=000000&logo=github&logoColor=ffffff)](https://github.com/genius8loci)
 
 </div>
-
 <br>
 
 ![Rust](https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=9966cc)
@@ -52,7 +50,6 @@
 ![PowerShell](https://img.shields.io/badge/PowerShell-000?style=flat-square&logo=powershell&logoColor=9966cc)
 Давайте я не буду позориться этим знанием. Но оставим в коде для истории.
 -->
-
 </div>
 
 ---
@@ -93,12 +90,7 @@
 | [rain.html](rain.html) | 21 КБ | та же сцена на `<canvas>` с настоящей физикой: любая капля, попавшая в контур, реально отскакивает |
 
 [Открыть живую версию →](https://htmlpreview.github.io/?https://github.com/genius8loci/genius8loci/blob/main/rain.html)
-
----
 -->
-
-<br>
-
 <div align="center">
 
 [![dalink.to/genius8loci](https://img.shields.io/badge/поддержать-dalink.to%2Fgenius8loci-9966CC?style=for-the-badge&logo=linktree&logoColor=white&labelColor=000000)](https://dalink.to/genius8loci)
