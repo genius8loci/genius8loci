@@ -93,7 +93,7 @@
 -->
 <div align="center">
 
-[![dalink.to/genius8loci](https://img.shields.io/badge/поддержать-dalink.to%2Fgenius8loci-9966CC?style=for-the-badge&logo=linktree&logoColor=white&labelColor=000000)](https://dalink.to/genius8loci)
+[![dalink](https://img.shields.io/badge/dalink-genius8loci-9966CC?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjUuNWwzLTNhNSA1IDAgMCAwLTctN0wxMS44IDUuMiIvPjxwYXRoIGQ9Ik0xNCAxMWE1IDUgMCAwIDAtNy41LS41bC0zIDNhNSA1IDAgMCAwIDcgN2wxLjctMS43Ii8%2BPC9zdmc%2B&labelColor=000000)](https://dalink.to/genius8loci)
 [![Boosty](https://img.shields.io/badge/boosty-genius8loci-9966CC?style=for-the-badge&logo=boosty&logoColor=white&labelColor=000000)](https://boosty.to/genius8loci/donate)
 [![DonationAlerts](https://img.shields.io/badge/donationalerts-genius__loci-9966CC?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTE4IDhhNiA2IDAgMCAwLTEyIDBjMCA3LTMgOS0zIDloMThzLTMtMi0zLTkiLz48cGF0aCBkPSJNMTMuNyAyMWEyIDIgMCAwIDEtMy40IDAiLz48L3N2Zz4%3D&labelColor=000000)](https://www.donationalerts.com/r/genius_loci)
 
