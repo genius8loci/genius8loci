@@ -98,6 +98,7 @@
 [![DonationAlerts](https://img.shields.io/badge/donationalerts-genius__loci-9966CC?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTE4IDhhNiA2IDAgMCAwLTEyIDBjMCA3LTMgOS0zIDloMThzLTMtMi0zLTkiLz48cGF0aCBkPSJNMTMuNyAyMWEyIDIgMCAwIDEtMy40IDAiLz48L3N2Zz4%3D&labelColor=000000)](https://www.donationalerts.com/r/genius_loci)
 
 [![Telegram](https://img.shields.io/badge/telegram-Genius__Loci-9966CC?style=for-the-badge&logo=telegram&logoColor=white&labelColor=000000)](https://t.me/Genius_Loci)
+[![Telegram-канал](https://img.shields.io/badge/канал-Memento__Drachma-9966CC?style=for-the-badge&logo=telegram&logoColor=white&labelColor=000000)](https://t.me/Memento_Drachma)
 [![Discord](https://img.shields.io/badge/discord-genius8loci-9966CC?style=for-the-badge&logo=discord&logoColor=white&labelColor=000000)](https://discord.com/users/253527347423084544)
 
 ![](https://img.shields.io/github/followers/genius8loci?style=for-the-badge&logo=github&logoColor=white&color=9966CC&labelColor=000000&label=%D0%9F%D0%BE%D0%B4%D0%BF%D0%B8%D1%81%D1%87%D0%B8%D0%BA%D0%B8)
