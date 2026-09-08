@@ -94,6 +94,11 @@
 <div align="center">
 
 [![dalink.to/genius8loci](https://img.shields.io/badge/поддержать-dalink.to%2Fgenius8loci-9966CC?style=for-the-badge&logo=linktree&logoColor=white&labelColor=000000)](https://dalink.to/genius8loci)
+[![Boosty](https://img.shields.io/badge/boosty-genius8loci-9966CC?style=for-the-badge&logo=boosty&logoColor=white&labelColor=000000)](https://boosty.to/genius8loci/donate)
+[![DonationAlerts](https://img.shields.io/badge/donationalerts-genius__loci-9966CC?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI%2BPHBhdGggZD0iTTE4IDhhNiA2IDAgMCAwLTEyIDBjMCA3LTMgOS0zIDloMThzLTMtMi0zLTkiLz48cGF0aCBkPSJNMTMuNyAyMWEyIDIgMCAwIDEtMy40IDAiLz48L3N2Zz4%3D&labelColor=000000)](https://www.donationalerts.com/r/genius_loci)
+
+[![Telegram](https://img.shields.io/badge/telegram-Genius__Loci-9966CC?style=for-the-badge&logo=telegram&logoColor=white&labelColor=000000)](https://t.me/Genius_Loci)
+[![Discord](https://img.shields.io/badge/discord-genius8loci-9966CC?style=for-the-badge&logo=discord&logoColor=white&labelColor=000000)](https://discord.com/users/253527347423084544)
 
 ![](https://img.shields.io/github/followers/genius8loci?style=for-the-badge&logo=github&logoColor=white&color=9966CC&labelColor=000000&label=%D0%9F%D0%BE%D0%B4%D0%BF%D0%B8%D1%81%D1%87%D0%B8%D0%BA%D0%B8)
 ![](https://img.shields.io/github/stars/genius8loci?affiliations=OWNER&style=for-the-badge&logo=github&logoColor=white&color=9966CC&labelColor=000000&label=%D0%97%D0%B2%D1%91%D0%B7%D0%B4%D1%8B)
