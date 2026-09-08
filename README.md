@@ -1,12 +1,12 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="rain.gif?v=1">
-  <source media="(prefers-color-scheme: light)" srcset="rain-light.gif?v=1">
-  <img alt="GENIUS8LOCI" src="rain.gif?v=1" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://cdn.jsdelivr.net/gh/genius8loci/genius8loci@95a6844095c09fa85d98ae61cd9134d677f8b671/rain.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://cdn.jsdelivr.net/gh/genius8loci/genius8loci@95a6844095c09fa85d98ae61cd9134d677f8b671/rain-light.svg">
+  <img alt="GENIUS8LOCI" src="https://cdn.jsdelivr.net/gh/genius8loci/genius8loci@95a6844095c09fa85d98ae61cd9134d677f8b671/rain.svg" width="100%">
 </picture>
 
-<br>
+<br><br>
 
 <div align="center">
 
